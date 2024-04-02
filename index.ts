@@ -11,10 +11,9 @@ const imgCamp = await Jimp.read(FILE_CAMP);
 imgHex
   .color([
     // { apply: "hue", params: [-90] },
-    { apply: "lighten", params: [90] },
-    // { apply: "xor", params: ["#06D"] },
+    { apply: "lighten", params: [100] },
   ])
-  .resize(imgHex.bitmap.width*1.2, Jimp.AUTO);
+  .resize(imgHex.bitmap.width * 1.5, Jimp.AUTO);
 
 imgCamp
   .composite(
@@ -22,7 +21,7 @@ imgCamp
     0, 0, // offsets
     {
       mode: Jimp.BLEND_SOURCE_OVER,
-      opacitySource: 0.35,
+      opacitySource: 0.25,
       opacityDest: 1,
     }
   )
@@ -40,9 +39,9 @@ const myPDF: PDFDocument = await PDFDocument.create();
 
 const addImgToPDF = (image: PDFImage, pdf: PDFDocument) => {
   const page = pdf.addPage();
-  const dims = image.scale(0.4)
+  const dims = image.scale(page.getWidth() / image.width)
   page.drawImage(image, {
-    x: page.getWidth() / 2 - dims.width / 2,
+    x: 0,
     y: page.getHeight() / 2 - dims.height / 2,
     width: dims.width,
     height: dims.height,
@@ -85,7 +84,6 @@ const pageWork = segments.map(async (part, index) => {
 });
 
 await Promise.all(pageWork);
-
 
 const pdfBytes = await myPDF.save();
 Bun.write('output.pdf', pdfBytes);
